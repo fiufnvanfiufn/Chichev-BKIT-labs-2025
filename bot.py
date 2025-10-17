@@ -7,7 +7,6 @@ bot = telebot.TeleBot("8040078848:AAGO4qrDMPEI39YuK81lsrZ6U6-dfbeUmMo")
 active_workers = {}
 
 def main_keyboard():
-    """Главная клавиатура"""
     keyboard = ReplyKeyboardMarkup(resize_keyboard=True)
 
     btn_start = KeyboardButton("Начать работу")
