@@ -9,7 +9,7 @@ class Square(Rectangle):
     def __repr__(self) -> str:
         return ("{name}: Сторона={side}, Цвет={color}, "
                 "Площадь={area:.2f}").format(
-                    name=self.name(),
+                    name=self.name,
                     side=self.width,
                     color=str(self.color),
                     area=self.area()
