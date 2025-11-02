@@ -1,21 +1,24 @@
 from lab_python_oop.Rectangle import Rectangle
 from lab_python_oop.Circle import Circle
 from lab_python_oop.Square import Square
-
-
 from colorama import Fore, Style, init
 
-def main():
-    N = 21
-    rect = Rectangle(N, N, "синий")
-    circ = Circle(N, "зеленый")
-    sq = Square(N, "красный")
+def create_shapes(size):
+    return [
+        Rectangle(size, size, "синий"),
+        Circle(size, "зеленый"),
+        Square(size, "красный")
+    ]
 
+def format_shapes(shapes):
     init(autoreset=True)
+    colors = [Fore.BLUE, Fore.GREEN, Fore.RED]
+    return [c + repr(s) + Style.RESET_ALL for c, s in zip(colors, shapes)]
 
-    print(Fore.BLUE + repr(rect) + Style.RESET_ALL)
-    print(Fore.GREEN + repr(circ) + Style.RESET_ALL)
-    print(Fore.RED + repr(sq) + Style.RESET_ALL)
+def main():
+    shapes = create_shapes(21)
+    for line in format_shapes(shapes):
+        print(line)
 
 if __name__ == "__main__":
     main()

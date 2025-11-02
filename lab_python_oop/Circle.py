@@ -15,8 +15,8 @@ class Circle(GeometricFigure):
         return math.pi * (self.radius ** 2)
 
     @classmethod
-    def get_name(cls) -> str:
-        return cls.name
+    def get_name(self) -> str:
+        return self.name
 
     def __repr__(self) -> str:
         return "{name} цвета: {color} радиус={radius}, площадь={area:.2f}".format(

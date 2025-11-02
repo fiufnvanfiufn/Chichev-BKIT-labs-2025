@@ -13,6 +13,9 @@ class Rectangle(GeometricFigure):
         return self.width * self.height
 
     def __repr__(self):
-        return "{} синего цвета шириной {} и высотой {} с площадью {}".format(
-            self.name, self.width, self.height, self.area()
-        )
+        return ("{name}: Сторона={side}, Цвет={color}, ""Площадь={area:.2f}").format(
+                    name=self.name,
+                    side=self.width,
+                    color=str(self.color),
+                    area=self.area()
+                )
