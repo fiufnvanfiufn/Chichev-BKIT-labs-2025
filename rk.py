@@ -1,23 +1,22 @@
 class OperatorProgram:
-
     def __init__(self, operator_id, operator_name, complexity_level, language_id):
         self.operator_id = operator_id
         self.operator_name = operator_name
         self.complexity_level = complexity_level
         self.language_id = language_id
 
-class ProgrammingLanguage:
 
+class ProgrammingLanguage:
     def __init__(self, language_id, language_name):
         self.language_id = language_id
         self.language_name = language_name
 
 
 class OperatorLanguageRelationship:
-
     def __init__(self, language_id, operator_id):
         self.language_id = language_id
         self.operator_id = operator_id
+
 
 programming_languages = [
     ProgrammingLanguage(1, 'Python'),
@@ -45,54 +44,70 @@ operators_languages_relationships = [
     OperatorLanguageRelationship(22, 2),
 ]
 
+
+def get_one_to_many(programming_languages, operator_programs):
+    return [
+        (o.operator_name, o.complexity_level, l.language_name)
+        for l in programming_languages
+        for o in operator_programs
+        if o.language_id == l.language_id
+    ]
+
+
+def get_languages_complexity(programming_languages, one_to_many):
+    result = []
+
+    for language in programming_languages:
+        ops = [x for x in one_to_many if x[2] == language.language_name]
+        if ops:
+            total = sum(op[1] for op in ops)
+            result.append((language.language_name, total))
+
+    return sorted(result, key=lambda x: x[1], reverse=True)
+
+
+def get_language_operators_with_word(
+        programming_languages,
+        operator_programs,
+        relations,
+        word='Язык'
+):
+    result = {}
+
+    for language in programming_languages:
+        if word in language.language_name:
+            operator_names = []
+
+            for rel in relations:
+                if rel.language_id == language.language_id:
+                    for op in operator_programs:
+                        if op.operator_id == rel.operator_id:
+                            operator_names.append(op.operator_name)
+
+            result[language.language_name] = operator_names
+
+    return result
+
+
 def main():
-
-    one_to_many_join = [(o.operator_name, o.complexity_level, l.language_name)
-                        for l in programming_languages
-                        for o in operator_programs
-                        if o.language_id == l.language_id]
-
-    many_to_many_temp = [(l.language_name, r.language_id, r.operator_id)
-                         for l in programming_languages
-                         for r in operators_languages_relationships
-                         if l.language_id == r.language_id]
-
-    many_to_many_join = [(o.operator_name, o.complexity_level, language_name)
-                         for language_name, language_id, operator_id in many_to_many_temp
-                         for o in operator_programs if o.operator_id == operator_id]
+    one_to_many = get_one_to_many(programming_languages, operator_programs)
 
     print('Запрос 1')
-    result_a1 = sorted(one_to_many_join, key=lambda x: x[2])
-    for element in result_a1:
-        print(f'Оператор: {element[0]:<10} Сложность: {element[1]:<3} Язык: {element[2]:<10}')
+    for x in one_to_many:
+        print(x)
 
     print('\nЗапрос 2')
-    unsorted_result_a2 = []
-
-    for language in programming_languages:
-        language_operators = list(filter(lambda i: i[2] == language.language_name, one_to_many_join))
-
-        if len(language_operators) > 0:
-            language_complexities = [complexity for _, complexity, _ in language_operators]
-            language_complexity_sum = sum(language_complexities)
-            unsorted_result_a2.append((language.language_name, language_complexity_sum))
-
-    result_a2 = sorted(unsorted_result_a2, key=lambda x: x[1], reverse=True)
-    for element in result_a2:
-        print(f'Язык: {element[0]:<10} Суммарная сложность: {element[1]:<3}')
+    for x in get_languages_complexity(programming_languages, one_to_many):
+        print(x)
 
     print('\nЗапрос 3')
-    result_a3 = {}
+    for k, v in get_language_operators_with_word(
+            programming_languages,
+            operator_programs,
+            operators_languages_relationships
+    ).items():
+        print(k, v)
 
-    for language in programming_languages:
-        if 'Язык' in language.language_name:
-            language_operators_m2m = list(filter(lambda i: i[2] == language.language_name, many_to_many_join))
-            operator_names_only = [name for name, _, _ in language_operators_m2m]
-
-            result_a3[language.language_name] = operator_names_only
-
-    for element in result_a3:
-        print(f'Язык: {element:<10} Операторы: ({', '.join(result_a3[element])})')
 
 if __name__ == '__main__':
     main()
